@@ -74,7 +74,7 @@ VITE_AMAP_SECURITY_CODE=你的安全密钥
 ```
 
 ## 页面布局
-![alt text](QQ20260410-162221.gif)
+![预览图](preview.gif)
 ```
 ┌──────────────────────────────────────────┐
 │           标题栏 (DigitalHeader)          │

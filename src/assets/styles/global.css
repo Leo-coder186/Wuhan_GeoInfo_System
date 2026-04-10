@@ -1,0 +1,275 @@
+/*
+ * =============================================
+ *  全局样式 - 地理信息大屏深色主题
+ * =============================================
+ * 
+ * 布局设计：左-中-右 三栏布局
+ * - 左侧面板：3 个图表（人口/GDP/产业）
+ * - 中间区域：高德地图（自适应宽度）
+ * - 右侧面板：3 个图表（交通/AQI/城市评估）
+ * - 底部统计栏：关键地理数据
+ */
+
+/* ---- CSS 变量 ---- */
+:root {
+  /* 主色调 - 科技蓝 */
+  --primary-color: #00d4ff;
+  --primary-glow: rgba(0, 212, 255, 0.3);
+  
+  /* 辅助色 */
+  --accent-color: #7b68ee;
+  --success-color: #00e676;
+  --warning-color: #ffab40;
+  --danger-color: #ff5252;
+  
+  /* 背景色 */
+  --bg-dark: #0a0e27;
+  --bg-card: rgba(16, 24, 64, 0.6);
+  --bg-card-hover: rgba(16, 24, 64, 0.8);
+  
+  /* 文字色 */
+  --text-primary: #e0e6ff;
+  --text-secondary: rgba(224, 230, 255, 0.6);
+  
+  /* 边框 */
+  --border-color: rgba(0, 212, 255, 0.15);
+  --border-glow: rgba(0, 212, 255, 0.4);
+  
+  /* 间距 */
+  --gap: 12px;
+  --radius: 10px;
+
+  /* 侧面板宽度 */
+  --panel-width: 300px;
+}
+
+/* ---- 全局重置 ---- */
+* {
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+}
+
+html, body {
+  width: 100%;
+  height: 100%;
+  overflow: hidden;
+}
+
+body {
+  font-family: 'Noto Sans SC', sans-serif;
+  color: var(--text-primary);
+  background: linear-gradient(135deg, #0a0e27 0%, #0f1538 40%, #0a1628 100%);
+}
+
+#app {
+  width: 100%;
+  height: 100%;
+}
+
+/* ---- 大屏主容器 ---- */
+.dashboard {
+  width: 100%;
+  height: 100vh;
+  padding: var(--gap);
+  display: flex;
+  flex-direction: column;
+  gap: var(--gap);
+  /* 背景网格装饰 */
+  background-image: 
+    radial-gradient(circle at 20% 50%, rgba(0, 212, 255, 0.03) 0%, transparent 50%),
+    radial-gradient(circle at 80% 20%, rgba(123, 104, 238, 0.03) 0%, transparent 50%),
+    linear-gradient(rgba(0, 212, 255, 0.02) 1px, transparent 1px),
+    linear-gradient(90deg, rgba(0, 212, 255, 0.02) 1px, transparent 1px);
+  background-size: 100% 100%, 100% 100%, 40px 40px, 40px 40px;
+}
+
+/* ====== 主内容区域：左-中-右三栏 ====== */
+.main-content {
+  flex: 1;
+  display: grid;
+  /* ★ 三栏布局：左 300px | 中间自适应 | 右 300px ★ */
+  grid-template-columns: var(--panel-width) 1fr var(--panel-width);
+  gap: var(--gap);
+  min-height: 0;
+}
+
+/* ====== 侧面板（左右共用样式） ====== */
+.side-panel {
+  display: flex;
+  flex-direction: column;
+  gap: var(--gap);
+  min-height: 0;
+}
+
+/* ====== 中间地图区域 ====== */
+.map-container {
+  border-radius: var(--radius);
+  overflow: hidden;
+  border: 1px solid var(--border-color);
+  position: relative;
+  animation: cardFadeIn 0.5s ease-out both;
+}
+
+/* 地图顶部装饰线 */
+.map-container::before {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  height: 2px;
+  background: linear-gradient(90deg, transparent, var(--primary-color), var(--accent-color), var(--primary-color), transparent);
+  z-index: 10;
+  opacity: 0.8;
+}
+
+/* ====== 图表卡片（毛玻璃效果） ====== */
+.chart-card {
+  flex: 1;
+  background: var(--bg-card);
+  border: 1px solid var(--border-color);
+  border-radius: var(--radius);
+  backdrop-filter: blur(20px);
+  -webkit-backdrop-filter: blur(20px);
+  padding: 12px;
+  display: flex;
+  flex-direction: column;
+  animation: cardFadeIn 0.6s ease-out both;
+  transition: all 0.3s ease;
+  position: relative;
+  overflow: hidden;
+  min-height: 0;
+}
+
+/* 卡片顶部装饰线 */
+.chart-card::before {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  height: 2px;
+  background: linear-gradient(90deg, transparent, var(--primary-color), transparent);
+  opacity: 0.6;
+}
+
+/* 鼠标悬停效果 */
+.chart-card:hover {
+  border-color: var(--border-glow);
+  background: var(--bg-card-hover);
+  box-shadow: 
+    0 0 20px rgba(0, 212, 255, 0.1),
+    inset 0 0 20px rgba(0, 212, 255, 0.02);
+  transform: translateY(-1px);
+}
+
+/* 左侧面板卡片逐个延迟出现 */
+.left-panel .chart-card:nth-child(1) { animation-delay: 0.1s; }
+.left-panel .chart-card:nth-child(2) { animation-delay: 0.2s; }
+.left-panel .chart-card:nth-child(3) { animation-delay: 0.3s; }
+
+/* 右侧面板卡片逐个延迟出现 */
+.right-panel .chart-card:nth-child(1) { animation-delay: 0.2s; }
+.right-panel .chart-card:nth-child(2) { animation-delay: 0.3s; }
+.right-panel .chart-card:nth-child(3) { animation-delay: 0.4s; }
+
+/* ---- 卡片标题 ---- */
+.chart-title {
+  font-size: 13px;
+  font-weight: 500;
+  color: var(--primary-color);
+  margin-bottom: 6px;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  letter-spacing: 1px;
+  flex-shrink: 0;
+}
+
+.chart-title::before {
+  content: '';
+  width: 8px;
+  height: 8px;
+  border-radius: 50%;
+  background: var(--primary-color);
+  box-shadow: 0 0 8px var(--primary-glow);
+  flex-shrink: 0;
+}
+
+/* ---- 图表容器 ---- */
+.chart-wrapper {
+  flex: 1;
+  min-height: 0;
+}
+
+/* ====== 底部统计栏 ====== */
+.stats-bar {
+  display: flex;
+  gap: var(--gap);
+  flex-shrink: 0;
+}
+
+.stat-item {
+  flex: 1;
+  background: var(--bg-card);
+  border: 1px solid var(--border-color);
+  border-radius: var(--radius);
+  backdrop-filter: blur(20px);
+  padding: 10px 16px;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  transition: all 0.3s ease;
+  animation: cardFadeIn 0.6s ease-out both;
+  position: relative;
+  overflow: hidden;
+}
+
+.stat-item::before {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  height: 2px;
+  background: linear-gradient(90deg, transparent, var(--primary-color), transparent);
+  opacity: 0.4;
+}
+
+.stat-item:nth-child(1) { animation-delay: 0.5s; }
+.stat-item:nth-child(2) { animation-delay: 0.6s; }
+.stat-item:nth-child(3) { animation-delay: 0.7s; }
+.stat-item:nth-child(4) { animation-delay: 0.8s; }
+
+.stat-item:hover {
+  border-color: var(--border-glow);
+  transform: translateY(-2px);
+}
+
+.stat-label {
+  font-size: 11px;
+  color: var(--text-secondary);
+  letter-spacing: 1px;
+}
+
+.stat-value {
+  font-family: 'Orbitron', monospace;
+  font-size: 20px;
+  font-weight: 700;
+  background: linear-gradient(135deg, var(--primary-color), var(--accent-color));
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  background-clip: text;
+}
+
+/* ====== 动画关键帧 ====== */
+@keyframes cardFadeIn {
+  from { opacity: 0; transform: translateY(20px); }
+  to   { opacity: 1; transform: translateY(0); }
+}
+
+@keyframes glow {
+  0%, 100% { text-shadow: 0 0 10px var(--primary-glow); }
+  50% { text-shadow: 0 0 20px var(--primary-glow), 0 0 40px rgba(0, 212, 255, 0.15); }
+}
